@@ -2,10 +2,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+function capitalize(text: string) {
+  return text.trim().split(' ').map(word => {
+    return word[0].toLocaleUpperCase().concat(word.substring(1))
+  }).join(' ');
+}
+
 const userSchema = z.object({
+  name: z.string()
+    .nonempty('Nome obrigatório')
+    .transform(name => capitalize(name)),
   email: z.string()
     .nonempty('E-mail obrigatório')
-    .email('E-mail inválido'),
+    .email('E-mail inválido')
+    .toLowerCase()
+    .refine(email => email.endsWith('@rocketseat.com.br'), 'E-mail incorreto'),
   password: z.string()
     .min(6, 'A senha precisa de no mínimo 6 caracteres'),
 })
@@ -28,6 +39,20 @@ function App() {
         className="flex flex-col gap-4 w-full max-w-sm"
       >
         <div className="flex flex-col gap-1">
+          <label htmlFor="name">Nome</label>
+          <input
+            type="text"
+            id="name"
+            className="border border-zinc-200 shadow-sm rounded h-10 px-3"
+            {...register("name", { required: true })}
+          />
+          {
+            errors.name &&
+              <span className="text-red-600">{errors.name.message}</span>
+          }
+        </div>
+
+        <div className="flex flex-col gap-1">
           <label htmlFor="email">E-mail</label>
           <input
             type="email"
@@ -37,7 +62,7 @@ function App() {
           />
           {
             errors.email &&
-              <span>{errors.email.message}</span>
+            <span className="text-red-600">{errors.email.message}</span>
           }
         </div>
 
@@ -51,7 +76,7 @@ function App() {
           />
           {
             errors.password &&
-              <span>{errors.password.message}</span>
+            <span className="text-red-600">{errors.password.message}</span>
           }
         </div>
 

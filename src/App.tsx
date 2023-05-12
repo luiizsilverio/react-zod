@@ -1,8 +1,21 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+const userSchema = z.object({
+  email: z.string()
+    .nonempty('E-mail obrigatório')
+    .email('E-mail inválido'),
+  password: z.string()
+    .min(6, 'A senha precisa de no mínimo 6 caracteres'),
+})
+
+type UserFormData = z.infer<typeof userSchema>
 
 function App() {
-  const { register, handleSubmit, formState } = useForm();
-  // const errors = formState.errors;
+  const { register, handleSubmit, formState: {errors} } = useForm<UserFormData>({
+    resolver: zodResolver(userSchema)
+  });
 
   function submitHandler(data: any) {
     console.log(data);
@@ -22,6 +35,10 @@ function App() {
             className="border border-zinc-200 shadow-sm rounded h-10 px-3"
             {...register("email", { required: true })}
           />
+          {
+            errors.email &&
+              <span>{errors.email.message}</span>
+          }
         </div>
 
         <div className="flex flex-col gap-1">
@@ -32,6 +49,10 @@ function App() {
             className="border border-zinc-200 shadow-sm rounded h-10 px-3"
             {...register("password", { required: true })}
           />
+          {
+            errors.password &&
+              <span>{errors.password.message}</span>
+          }
         </div>
 
         <button

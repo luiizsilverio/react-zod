@@ -52,13 +52,21 @@ function App() {
     append({ title: '', knowledge: 0 });
   }
 
-  async function submitHandler(data: UserFormData) {
-    await supabase.storage.from('imagens').upload(
-      data.avatar.name,
-      data.avatar
-    );
+  async function submitHandler(dados: UserFormData) {
+    console.log(dados.avatar);
+    const { data, error } = await supabase.storage
+      .from('imagens')
+      .upload(
+        dados.avatar.name,
+        dados.avatar,
+        {
+          cacheControl: "3600",
+          upsert: true, // sobrepõe a imagem, caso já exista com esse nome no Storage
 
-    console.log(data);
+        }
+      );
+
+    console.log(error ? error : data);
   }
 
   return (

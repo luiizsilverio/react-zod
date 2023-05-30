@@ -43,13 +43,17 @@ function App() {
     resolver: zodResolver(userSchema)
   });
 
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: 'techs'
   })
 
   function addNewTech() {
     append({ title: '', knowledge: 0 });
+  }
+
+  function removeTech(index) {
+    remove(index);
   }
 
   async function submitHandler(dados: UserFormData) {
@@ -135,8 +139,17 @@ function App() {
         <div className="flex flex-col gap-1">
           <label htmlFor="" className="flex items-center justify-between">
             Tecnologias / Conhecimento de 1 a 10
-            <button type="button" onClick={addNewTech} className="text-emerald-500 text-xs">
+            <button type="button"
+              onClick={addNewTech}
+              className="text-emerald-500 text-xs"
+            >
               Adicionar
+            </button>
+            <button type="button"
+              onClick={(index) => removeTech(index)}
+              className="text-emerald-500 text-xs"
+            >
+              Remover
             </button>
           </label>
           {

@@ -52,7 +52,7 @@ function App() {
     append({ title: '', knowledge: 0 });
   }
 
-  function removeTech(index) {
+  function removeTech(index: any) {
     remove(index);
   }
 
